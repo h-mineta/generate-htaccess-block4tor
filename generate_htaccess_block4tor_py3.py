@@ -9,7 +9,7 @@ import ipaddress
 import os
 import re
 import sys
-import urllib.request
+import urllib.request, urllib.parse, urllib.error
 
 parser = argparse.ArgumentParser(description='Generate .htaccess to block for Tor')
 
@@ -33,6 +33,16 @@ parser.add_argument('-e', '--export-dir',
                     default='.',
                     type=str,
                     help='directory to export .htaccess')
+
+parser.add_argument('--http-proxy',
+                    action='store',
+                    nargs='?',
+                    const=None,
+                    default=None,
+                    type=str,
+                    choices=None,
+                    help='HTTP Proxy(default: None)',
+                    metavar=None)
 
 parser.add_argument('address',
                     action='store',
@@ -58,9 +68,19 @@ def main(args):
         'port': args.port,
     }
 
+    opener = urllib.request.build_opener()
+
+    # Proxy有り
+    if args.http_proxy:
+        proxy_handler = urllib.request.ProxyHandler({
+            "http": args.http_proxy,
+            "https": args.http_proxy
+        })
+        opener.add_handler(proxy_handler)
+
     request = urllib.request.Request('{}?{}'.format(args.torbulkexitlist, urllib.parse.urlencode(request_params)))
     try:
-        with urllib.request.urlopen(request) as request:
+        with opener.open(request) as request:
             response = request.read().decode('utf-8')
     except urllib.error.HTTPError as ex:
         print('[error] HTTP access error code:{}'.format(ex.code), file=sys.stderr)
