@@ -36,6 +36,16 @@ parser.add_argument('-e', '--export-dir',
                     type=unicode,
                     help='directory to export .htaccess')
 
+parser.add_argument('--http-proxy',
+                    action='store',
+                    nargs='?',
+                    const=None,
+                    default=None,
+                    type=str,
+                    choices=None,
+                    help='HTTP Proxy(default: None)',
+                    metavar=None)
+
 parser.add_argument('address',
                     action='store',
                     nargs=1,
@@ -59,6 +69,17 @@ def main(args):
         'ip': destination_ipv4address,
         'port': args.port,
     }
+
+    opener = urllib2.build_opener()
+
+    # Proxy有り
+    if args.http_proxy:
+        proxy_handler = urllib2.ProxyHandler({
+            "http": args.http_proxy,
+            "https": args.http_proxy
+        })
+        opener.add_handler(proxy_handler)
+    urllib2.install_opener(opener)
 
     request = urllib2.Request('%s?%s' % (args.torbulkexitlist, urllib.urlencode(request_params)))
     try:
