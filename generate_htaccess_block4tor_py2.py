@@ -100,6 +100,7 @@ def main(args):
             file_htaccess.write(u'    Require all granted\n')
             file_htaccess.writelines(exit_list_strings)
             file_htaccess.write(u'</RequireAll>\n')
+            file_htaccess.flush()
 
     except Exception, ex:
         print >>sys.stderr, '[error] ',; sys.stderr.write('')
