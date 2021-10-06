@@ -40,7 +40,7 @@ function main() {
 	-p ${TARGET_PORT} \
 	-e ${HTACCESS_TEMP} \
 	${TARGET_ADDRESS})
-	RESULT_CDODE=$?
+	RESULT_CODE=$?
 
 	# 次回用に.htaccessを残す
 	if [ -e "${HTACCESS_TEMP}/.htaccess" ]; then
@@ -48,7 +48,7 @@ function main() {
 	fi
 
 	# 正常終了
-	if [ ${RESULT_CDODE} -ne 0 ]; then
+	if [ ${RESULT_CODE} -ne 0 ]; then
 		echo "[error] error result code : " ${RESULT_CODE}
 		return ${RESULT_CODE}
 	fi
